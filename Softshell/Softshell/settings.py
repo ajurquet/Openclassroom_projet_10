@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-from Users.models import Users
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -32,6 +31,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,13 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'Users'
     'Comments',
     'Issues',
-    'Projects'
+    'Projects',
+    'Users',
 ]
-
-AUTH_USER_MODEL = 'Users.Users'
 
 
 MIDDLEWARE = [
@@ -140,3 +138,4 @@ REST_FRAMEWORK = {
   ),
 }
 
+AUTH_USER_MODEL = 'Users.Users'

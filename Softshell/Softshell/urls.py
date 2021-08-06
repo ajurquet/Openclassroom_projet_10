@@ -13,11 +13,36 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls import include
-from django.contrib import admin
-from django.urls import path
 
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from Projects.views import ProjectsViewSet
+from Issues.views import IssuesViewSet
+# from Comments import views
+
+# Create a router and register our viewsets with it.
+router = DefaultRouter()
+router.register(r'projects', ProjectsViewSet)
+router.register(r'issues', IssuesViewSet)
+
+
+# The API URLs are now determined automatically by the router.
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls'))
+    path('', include(router.urls)),
 ]
+
+
+
+
+# from django.conf.urls import include
+# from django.contrib import admin
+# from django.urls import path
+
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#     path('projects/', include('Projects.urls')),
+# ]
+
+# urlpatterns += [
+#     path('api-auth/', include('rest_framework.urls')),
+# ]
