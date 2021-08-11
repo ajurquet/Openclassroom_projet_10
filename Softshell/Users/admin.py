@@ -9,12 +9,13 @@ from .models import Users
 
 
 class UserCreationForm(forms.ModelForm):
+    email = forms.EmailField(label='Email', widget=forms.EmailInput)
     password1 = forms.CharField(label='Mot de passe', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirmer le mot de passe', widget=forms.PasswordInput)
 
     class Meta:
         model = Users
-        fields = ("first_name","last_name", "email")
+        fields = ("first_name", "last_name", "email")
 
 
     def clean_password2(self):

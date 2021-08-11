@@ -15,5 +15,9 @@ class Projects(models.Model):
     description = models.CharField(max_length=255)
     type = models.CharField(max_length=7, choices=PROJECT_TYPES)
     author_user_id = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                       on_delete=models.RESTRICT
+                                       on_delete=models.RESTRICT,
+                                       related_name='Projects_created'
                                        )
+
+    def __str__(self):
+        return self.title

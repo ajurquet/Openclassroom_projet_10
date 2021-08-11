@@ -8,8 +8,9 @@ class Comments(models.Model):
     comment_id = models.AutoField(primary_key=True)
     description = models.CharField(max_length=128, blank=False)
     author_user_id = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                       on_delete=models.RESTRICT
+                                       on_delete=models.RESTRICT,
+                                       related_name='Comments'
                                        )
-    issue_id = models.ForeignKey(Issues, on_delete=models.CASCADE)
+    issue_id = models.ForeignKey(Issues, on_delete=models.CASCADE, related_name='Comments')
     created_time = models.DateTimeField(auto_now_add=True)
 

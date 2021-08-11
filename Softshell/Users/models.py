@@ -46,6 +46,10 @@ class Users(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
+    def get_full_name(self):
+        full_name = f"{self.first_name} {self.last_name}"
+        return full_name.strip()
+
     def has_perm(self, perm, obj=None):
         return True
 
@@ -57,7 +61,7 @@ class Users(AbstractBaseUser, PermissionsMixin):
 
 
 class Contributors(models.Model):
-    user_id = models.ForeignKey(Users, on_delete=CASCADE)
-    project_id = models.ForeignKey(Projects, on_delete=CASCADE)
-    permission = models.  IntegerField(blank=False) # Choices ?
+    user_id = models.ForeignKey(Users, on_delete=CASCADE, related_name='Users')
+    project_id = models.ForeignKey(Projects, on_delete=CASCADE, related_name='Projects')
+    permission = models.IntegerField(blank=False) # Choices ?
     role = models.CharField(max_length=128)
