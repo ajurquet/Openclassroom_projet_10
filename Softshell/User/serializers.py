@@ -8,11 +8,7 @@ from Comment.models import Comment
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # project_created = serializers.PrimaryKeyRelatedField(many=True, queryset=Project.objects.all())
-    # issue_created = serializers.PrimaryKeyRelatedField(many=True, queryset=Issue.objects.all())
-    # issue_assigned = serializers.PrimaryKeyRelatedField(many=True, queryset=Issue.objects.all())
-    # comment = serializers.PrimaryKeyRelatedField(many=True, queryset=Comment.objects.all())
-
+    
     class Meta(object):
         model = User
         fields = ('first_name',
