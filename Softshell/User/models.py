@@ -9,58 +9,32 @@ from django.db.models.deletion import CASCADE, RESTRICT
 from django.db import transaction
 
 
+
 class UserManager(BaseUserManager):
-    def _create_user(self, email, password, **extra_fields):
-        """
-        Creates and saves a User with the given email,and password.
-        """
-        if not email:
-            raise ValueError('The given email must be set')
-        try:
-            with transaction.atomic():
-                user = self.model(email=email, **extra_fields)
-                user.set_password(password)
-                user.save(using=self._db)
-                return user
-        except:
-            raise
 
     def create_user(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', False)
-        extra_fields.setdefault('is_superuser', False)
-        return self._create_user(email, password, **extra_fields)
+        if not email:
+            raise ValueError('Vous devez entrer un email.')
+        
+        user_obj = self.model(
+                        email = self.normalize_email(email),
+                        )
+        user_obj.set_password(password)
+        user_obj.save()
+        return user_obj
 
     def create_superuser(self, email, password, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-
-        return self._create_user(email, password=password, **extra_fields)
-
-
-
-
-    # def create_user(self, email, password=None, **extra_fields):
-    #     if not email:
-    #         raise ValueError('Vous devez entrer un email.')
-        
-    #     user_obj = self.model(
-    #                     email = self.normalize_email(email),
-    #                     )
-    #     user_obj.set_password(password)
-    #     user_obj.save()
-    #     return user_obj
-
-    # def create_superuser(self, email, password, **extra_fields):
-    #     user = self.create_user(email=email,
-    #                             password=password,
-    #                             )
-    #     user.is_admin = True
-    #     user.is_staff = True
-    #     user.save()
-    #     return user
+        user = self.create_user(email=email,
+                                password=password,
+                                )
+        user.is_admin = True
+        user.is_staff = True
+        user.save()
+        return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+
     first_name = models.CharField(max_length=128, blank=True)
     last_name = models.CharField(max_length=128, blank=True)
     email = models.EmailField(blank=False, unique=True)
@@ -94,7 +68,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Contributor(models.Model):
-    user = models.ForeignKey(User, on_delete=CASCADE, related_name='user')
-    project = models.ForeignKey(Project, on_delete=CASCADE, related_name='project')
-    permission = models.IntegerField(blank=False) # Choices
-    role = models.CharField(max_length=128)
+    user = models.ForeignKey(User, on_delete=CASCADE, related_name='user_contributor')
+    project = models.ForeignKey(Project, on_delete=CASCADE, related_name='project_contributor')
+    # permission = models.IntegerField(null=True) # Choices
+    # role = models.CharField(null=True, max_length=128)
+

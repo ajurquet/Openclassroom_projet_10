@@ -6,6 +6,9 @@ from .serializers import UserSerializer
 from rest_framework.decorators import action
 from django.conf import settings
 from django.contrib.auth import user_logged_in
+from rest_framework.permissions import IsAdminUser
+# from rest_framework_simplejwt.views import TokenObtainPairView
+from .models import Contributor
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -13,67 +16,28 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = []
 
-
-    # @action(detail=True, methods=['post'], permission_classes=[])
-    # def authenticate_user(request):
-    #     try:
-    #         email = request.data['email']
-    #         password = request.data['password']
-
-    #         user = Users.objects.get(email=email, password=password)
-    #         if user:
-    #             try:
-    #                 payload = jwt_payload_handler(user)
-    #                 token = jwt.encode(payload, settings.SECRET_KEY)
-    #                 user_details = {}
-    #                 user_details['name'] = "%s %s" % (
-    #                     user.first_name, user.last_name)
-    #                 user_details['token'] = token
-    #                 user_logged_in.send(sender=user.__class__,
-    #                                     request=request, user=user)
-    #                 return Response(user_details, status=status.HTTP_200_OK)
-
-    #             except Exception as e:
-    #                 raise e
-    #         else:
-    #             res = {
-    #                 'error': 'can not authenticate with the given credentials or the account has been deactivated'}
-    #             return Response(res, status=status.HTTP_403_FORBIDDEN)
-    #     except KeyError:
-    #         res = {'error': 'please provide a email and a password'}
-    #         return Response(res)
+    def get_queryset(self):
+        return Contributor.objects.filter(user=self.kwargs['user_pk'])
 
 
 
-# TODO JWT convertir ce qui suit pour la modelViewSet 
 
-# @api_view(['POST'])
-# @permission_classes([AllowAny, ])
-# def authenticate_user(request):
 
-#     try:
-#         email = request.data['email']
-#         password = request.data['password']
+    # Faire ca pour le signup :
+ 
+    # @action(methods=['post'], detail=True, permission_classes=[IsAdminOrIsSelf])
+    # def set_password(self, request, pk=None):
 
-#         user = User.objects.get(email=email, password=password)
-#         if user:
-#             try:
-#                 payload = jwt_payload_handler(user)
-#                 token = jwt.encode(payload, settings.SECRET_KEY)
-#                 user_details = {}
-#                 user_details['name'] = "%s %s" % (
-#                     user.first_name, user.last_name)
-#                 user_details['token'] = token
-#                 user_logged_in.send(sender=user.__class__,
-#                                     request=request, user=user)
-#                 return Response(user_details, status=status.HTTP_200_OK)
+    # The following route would be generated:
+    # URL pattern: ^users/{pk}/set_password/$
+    # URL name: 'user-set-password'
 
-#             except Exception as e:
-#                 raise e
-#         else:
-#             res = {
-#                 'error': 'can not authenticate with the given credentials or the account has been deactivated'}
-#             return Response(res, status=status.HTTP_403_FORBIDDEN)
-#     except KeyError:
-#         res = {'error': 'please provide a email and a password'}
-#         return Response(res)
+    # By default, the URL pattern is based on the method name, and the URL name is the combination of the ViewSet.basename
+    # and the hyphenated method name. If you don't want to use the defaults for either of these values, you can instead 
+    # provide the url_path and url_name arguments to the @action decorator.
+
+    # For example, if you want to change the URL for our custom action to ^users/{pk}/change-password/$, you could write:
+
+    # @action(methods=['post'], detail=True, permission_classes=[IsAdminOrIsSelf],
+    #         url_path='change-password', url_name='change_password')
+    # def set_password(self, request, pk=None):

@@ -1,17 +1,13 @@
-from Issue.models import Issue
-from django.contrib.auth import models
-from django.db.models import fields
 from rest_framework import serializers
 from .models import User
-from Project.models import Project
-from Comment.models import Comment
 
 
 class UserSerializer(serializers.ModelSerializer):
     
     class Meta(object):
         model = User
-        fields = ('first_name',
+        fields = ('id',
+                  'first_name',
                   'last_name',
                   'email',
                   'password',
@@ -21,7 +17,20 @@ class UserSerializer(serializers.ModelSerializer):
                   'issue_assigned_to',
                   'project_created_by',
                   'user_comment',
+                  'user_contributor',
                   )
         extra_kwargs = {'password': {'write_only': True}}
+
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            email = validated_data["email"],
+            first_name = validated_data["first_name"],
+            last_name = validated_data["last_name"],
+        )
+
+        user.set_password(validated_data["password"])
+        user.save()
+        return user
 
 
