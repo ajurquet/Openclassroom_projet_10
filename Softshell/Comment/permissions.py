@@ -9,8 +9,8 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         message = "Seul l'auteur du commentaire peut actualiser ou supprimer"
-
-        if request.method in permissions.SAFE_METHODS:
-            return True
+        
+        if request.method in permissions.SAFE_METHODS: # "method" correspond ici à GET, PUT etc.....
+            return True # True correspond ici à "read only"
 
         return obj.author == request.user

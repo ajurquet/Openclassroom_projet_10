@@ -6,7 +6,6 @@ from django.contrib.auth.base_user import (
                                     BaseUserManager,
                                     )
 from django.db.models.deletion import CASCADE, RESTRICT
-from django.db import transaction
 
 
 
@@ -70,6 +69,5 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Contributor(models.Model):
     user = models.ForeignKey(User, on_delete=CASCADE, related_name='user_contributor')
     project = models.ForeignKey(Project, on_delete=CASCADE, related_name='project_contributor')
-    # permission = models.IntegerField(null=True) # Choices
-    # role = models.CharField(null=True, max_length=128)
+
 

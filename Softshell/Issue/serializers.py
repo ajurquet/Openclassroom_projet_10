@@ -4,7 +4,6 @@ from .models import Issue
 
 
 class IssueSerializer(serializers.ModelSerializer):
-    # Comments = serializers.PrimaryKeyRelatedField(many=True, queryset=Comment.objects.all())
     class Meta:
         model = Issue
         fields = ['id', 

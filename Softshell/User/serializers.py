@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from .models import User
+from .models import Contributor, User
+from Project.models import Project
 
 
 class UserSerializer(serializers.ModelSerializer):
-    
     class Meta(object):
         model = User
         fields = ('id',
@@ -33,4 +33,26 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
+class ContributorSerializer(serializers.ModelSerializer):
+    project = serializers.PrimaryKeyRelatedField(read_only='True')
+
+    class Meta(object):
+        model = Contributor
+        fields = ('id',
+                  'user',
+                  'project',
+                  )
+
+    def create(self, validated_data):
+        projet = Project.objects.get(pk=self.context.get("view").kwargs["project_pk"])
+        contributor = Contributor.objects.create(
+            user = validated_data["user"],
+            project = projet
+        )
+        contributor.save()
+        return contributor
+
+    # def perform_create(self, serializer):
+    #     serializer.save(project=self.request.project)
 

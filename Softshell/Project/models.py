@@ -1,3 +1,4 @@
+# from User.models import Contributor
 from django.db import models
 
 from django.conf import settings
@@ -17,6 +18,8 @@ class Project(models.Model):
                                        on_delete=models.RESTRICT,
                                        related_name='project_created_by'
                                        )
+    # contributors = models.ManyToManyField(Contributor, through=Contributor)
+
 
     def __str__(self):
         return self.title

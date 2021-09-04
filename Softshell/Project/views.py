@@ -1,60 +1,34 @@
-from rest_framework.decorators import action, permission_classes
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework import permissions
-
+from rest_framework import request, viewsets
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAuthorOrReadOnly, IsContributorOrReadOnly
 from .models import Project
 from .serializers import ProjectSerializer
+from User.models import Contributor
 
 
-class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.all()
+# Un projet ne doit être accessible qu'à son responsable et aux contributeurs.
+
+# Seuls les contributeurs sont autorisés à créer ou à consulter les problèmes
+# d'un projet.
+
+
+
+class ProjectViewSet(viewsets.ModelViewSet, IsAuthorOrReadOnly, IsContributorOrReadOnly):
+
+    queryset = Project.objects.all() # seul l'auteur ou les contributeur peuvent voir 
     serializer_class = ProjectSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated&IsAuthorOrReadOnly|IsContributorOrReadOnly]
+    # permission_classes = [IsAuthenticated&IsAuthor]
    
-
-    def destroy(self, request, *args, **kwargs):
-        project = self.get_object()
-        user = request.user
-
-        if project['author_user_id'] == user.user_id:
-            project.delete()
-            return Response({'message' : 'Projet effacé'})
-        else:
-            return Response({'message' : "Vous ne pouvez effacer un projet que si vous en êtes l'auteur"}) 
+    # def get_queryset(self):
+    #     contributors = Contributor.objects.filter()
+    #     print(contributors)
+    #     return Project.objects.filter()
 
 
 
+# & (and), | (or) and ~ (not).
 
-
-# @action(detail=False, methods=['post', 'put'], permission_classes=[IsAuthenticated])
-
-# if request.method == 'POST':
-#         serializer = SnippetSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# if request.method == 'PUT':
-#         serializer = SnippetSerializer(snippet, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# class ProjectsList(APIView):
-
-#     def get(self, request, format=None):
-#         projects = Projects.objects.all()
-#         serializer = ProjectSerializer(projects, many=True)
-#         return Response(serializer.data)
-
-#     def post(self, request, format=None):
-#         serializer = ProjectSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HHTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+# class Contributor(models.Model):
+#     user = models.ForeignKey(User, on_delete=CASCADE, related_name='user_contributor')
+#     project = models.ForeignKey(Project, on_delete=CASCADE, related_name='project_contributor')

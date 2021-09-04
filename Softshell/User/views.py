@@ -1,14 +1,8 @@
-from django.shortcuts import render
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from .models import User
-from .serializers import UserSerializer
-from rest_framework.decorators import action
-from django.conf import settings
-from django.contrib.auth import user_logged_in
-from rest_framework.permissions import IsAdminUser
-# from rest_framework_simplejwt.views import TokenObtainPairView
-from .models import Contributor
+from rest_framework import viewsets
+from .models import User, Contributor
+from .serializers import UserSerializer, ContributorSerializer
+from rest_framework.permissions import IsAuthenticated
+
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -16,8 +10,15 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = []
 
+
+class ContributorViewSet(viewsets.ModelViewSet):
+    queryset = Contributor.objects.all()
+    serializer_class = ContributorSerializer
+    permission_classes = [IsAuthenticated]
+
     def get_queryset(self):
-        return Contributor.objects.filter(user=self.kwargs['user_pk'])
+        return Contributor.objects.all()
+        # return Contributor.objects.filter(project=self.kwargs['project_pk'])|Contributor.objects.filter(user=self.kwarg['user_pk]'])
 
 
 
