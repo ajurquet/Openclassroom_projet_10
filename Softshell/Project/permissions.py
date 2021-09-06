@@ -2,27 +2,22 @@ from rest_framework import permissions
 from User.models import Contributor
 
 
-class IsAuthorOrReadOnly(permissions.BasePermission):
+class IsAuthor(permissions.BasePermission):
 # Un projet ne doit être accessible qu'à son responsable et aux contributeurs.
 
 # Seuls les contributeurs sont autorisés à créer ou à consulter les problèmes
 # d'un projet.
 
 
-    def has_permission(self, request):
+    def has_object_permission(self, request, view,  obj):
         message = "Seul un auteur ou contributeur du projet peut effectuer des opérations"
 
-        print(request.user)
-
-        if request.user == request.author:
+        if obj.author == request.user:
             return True
-        # if request.method in permissions.SAFE_METHODS:
-        #     return True
-
-        # return request.author == request.user
+        return False
 
 
-class IsContributorOrReadOnly(permissions.BasePermission):
+class IsContributor(permissions.BasePermission):
 # Un projet ne doit être accessible qu'à son responsable et aux contributeurs.
 
 # Seuls les contributeurs sont autorisés à créer ou à consulter les problèmes

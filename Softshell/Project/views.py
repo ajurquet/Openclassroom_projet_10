@@ -1,6 +1,6 @@
 from rest_framework import request, viewsets
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsAuthorOrReadOnly, IsContributorOrReadOnly
+from .permissions import IsAuthor, IsContributor
 from .models import Project
 from .serializers import ProjectSerializer
 from User.models import Contributor
@@ -13,18 +13,17 @@ from User.models import Contributor
 
 
 
-class ProjectViewSet(viewsets.ModelViewSet, IsAuthorOrReadOnly, IsContributorOrReadOnly):
+class ProjectViewSet(viewsets.ModelViewSet):
 
     queryset = Project.objects.all() # seul l'auteur ou les contributeur peuvent voir 
     serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticated&IsAuthorOrReadOnly|IsContributorOrReadOnly]
-    # permission_classes = [IsAuthenticated&IsAuthor]
+    permission_classes = [IsAuthenticated&IsAuthor&IsContributor]
    
-    # def get_queryset(self):
-    #     contributors = Contributor.objects.filter()
-    #     print(contributors)
-    #     return Project.objects.filter()
+    def get_queryset(self):
+        contributors = Contributor.objects.filter(user=self.request.user)
 
+        # "project_contribor" correspond au related_name de "projet" dans le modèle "Contributor"
+        return Project.objects.filter(project_contributor__in=contributors)|Project.objects.filter(author=self.request.user)
 
 
 # & (and), | (or) and ~ (not).

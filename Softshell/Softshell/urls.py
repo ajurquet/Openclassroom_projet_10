@@ -3,7 +3,7 @@ from django.contrib import admin
 from rest_framework.routers import SimpleRouter, DefaultRouter
 from Project.views import ProjectViewSet
 from Issue.views import IssueViewSet
-from User.views import ContributorViewSet
+from User.views import ContributorViewSet, UserViewSet
 from Comment.views import CommentViewSet
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -33,5 +33,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
+    path('', include('rest_framework.urls', namespace='rest_framework')),
+    path('signup/', UserViewSet.as_view({'post': 'create'}), name='signup')
+    # path('signup/', include('rest_auth.registration.urls')),
 ]
