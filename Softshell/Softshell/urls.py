@@ -13,7 +13,7 @@ from rest_framework_nested import routers
 
 
 router = SimpleRouter()
-router.register(r'projects', ProjectViewSet)
+router.register(r'projects', ProjectViewSet, basename='projects')
 
 projects_router = routers.NestedSimpleRouter(router, r'projects', lookup='project')
 users_router = routers.NestedSimpleRouter(router, r'projects', lookup='user')
@@ -31,9 +31,8 @@ urlpatterns = [
     path('', include(issues_router.urls)),
     path('', include(users_router.urls)),
     path('admin/', admin.site.urls),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('login', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include('rest_framework.urls', namespace='rest_framework')),
     path('signup/', UserViewSet.as_view({'post': 'create'}), name='signup')
-    # path('signup/', include('rest_auth.registration.urls')),
 ]

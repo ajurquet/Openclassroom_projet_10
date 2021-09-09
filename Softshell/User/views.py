@@ -1,7 +1,6 @@
 from rest_framework import viewsets
 from .models import User, Contributor
 from .serializers import UserSerializer, ContributorSerializer
-from rest_framework.permissions import IsAuthenticated
 
 
 
@@ -14,7 +13,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class ContributorViewSet(viewsets.ModelViewSet):
     queryset = Contributor.objects.all()
     serializer_class = ContributorSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
 
     def get_queryset(self):
         return Contributor.objects.all()

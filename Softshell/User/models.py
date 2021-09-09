@@ -70,4 +70,7 @@ class Contributor(models.Model):
     user = models.ForeignKey(User, on_delete=CASCADE, related_name='user_contributor')
     project = models.ForeignKey(Project, on_delete=CASCADE, related_name='project_contributor')
 
+    def __str__(self):
+        return f'{self.user}'
+
 

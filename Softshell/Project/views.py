@@ -1,10 +1,8 @@
-from rest_framework import request, viewsets
-from rest_framework.permissions import IsAuthenticated
-from .permissions import IsAuthor, IsContributor
+from rest_framework import viewsets
+from .permissions import IsAuthorOrReadOnly
 from .models import Project
 from .serializers import ProjectSerializer
 from User.models import Contributor
-
 
 # Un projet ne doit être accessible qu'à son responsable et aux contributeurs.
 
@@ -12,22 +10,23 @@ from User.models import Contributor
 # d'un projet.
 
 
-
 class ProjectViewSet(viewsets.ModelViewSet):
 
-    queryset = Project.objects.all() # seul l'auteur ou les contributeur peuvent voir 
     serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticated&IsAuthor&IsContributor]
+    permission_classes = [IsAuthorOrReadOnly]
    
-    def get_queryset(self):
+    def get_queryset(self): 
         contributors = Contributor.objects.filter(user=self.request.user)
+        for contributor in contributors:
+            print(contributor.user)
 
-        # "project_contribor" correspond au related_name de "projet" dans le modèle "Contributor"
-        return Project.objects.filter(project_contributor__in=contributors)|Project.objects.filter(author=self.request.user)
+        Project.objects.filter(project_contributor__in=contributors)
+        print(f"user in contributors : {contributors}")
+        
+        user = self.request.user
+
+        # project_contributor correspond au related_name de "projet" dans le modèle Contributor
+        return (Project.objects.filter(author=self.request.user)|Project.objects.filter(project_contributor__in=contributors)).distinct()
 
 
 # & (and), | (or) and ~ (not).
-
-# class Contributor(models.Model):
-#     user = models.ForeignKey(User, on_delete=CASCADE, related_name='user_contributor')
-#     project = models.ForeignKey(Project, on_delete=CASCADE, related_name='project_contributor')

@@ -13,3 +13,5 @@ class Comment(models.Model):
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='issue_comment')
     created_time = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.description}"

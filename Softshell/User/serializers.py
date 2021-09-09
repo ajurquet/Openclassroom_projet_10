@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import request, serializers
 from .models import Contributor, User
 from Project.models import Project
 
@@ -44,8 +44,16 @@ class ContributorSerializer(serializers.ModelSerializer):
                   'project',
                   )
 
+
+    def validate_user(self, value):
+        user = self.context['request'].user
+        if user == value:
+            raise serializers.ValidationError("L'auteur du projet ne peut pas être contributeur")
+        return value
+
     def create(self, validated_data):
         projet = Project.objects.get(pk=self.context.get("view").kwargs["project_pk"])
+
         contributor = Contributor.objects.create(
             user = validated_data["user"],
             project = projet
