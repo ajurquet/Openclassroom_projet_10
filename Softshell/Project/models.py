@@ -1,7 +1,6 @@
-# from User.models import Contributor
 from django.db import models
-
 from django.conf import settings
+
 
 class Project(models.Model):
     PROJECT_TYPES = [
@@ -15,11 +14,9 @@ class Project(models.Model):
     description = models.CharField(max_length=255)
     type = models.CharField(max_length=7, choices=PROJECT_TYPES)
     author = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                       on_delete=models.RESTRICT,
-                                       related_name='project_created_by'
-                                       )
-    # contributors = models.ManyToManyField(Contributor, through=Contributor)
-
+                               on_delete=models.RESTRICT,
+                               related_name='project_created_by'
+                               )
 
     def __str__(self):
         return self.title

@@ -1,14 +1,14 @@
 from rest_framework import serializers
 from .models import Issue
+from Project.models import Project
 
 
 class IssueSerializer(serializers.ModelSerializer):
-    author = serializers.StringRelatedField()
     issue_comment = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Issue
-        fields = ['id', 
+        fields = ['id',
                   'title',
                   'desc',
                   'tag',
@@ -20,23 +20,30 @@ class IssueSerializer(serializers.ModelSerializer):
                   'created_time',
                   'issue_comment'
                   ]
-        read_only_fields = ['author']
+        read_only_fields = ['author', 'project', 'created_time', ]
 
-def create(self, validated_data):
-        author = self.context.get("request", None).user #récupère le token
+    def create(self, validated_data):
+        # récupère le token
+        author = self.context.get("request", None).user
 
-        project = Issue.objects.create(
-            title = validated_data["title"],
-            desc = validated_data["desc"],
-            tag = validated_data["tag"],
-            priority = validated_data["priority"],
-            project = validated_data["project"],
-            status = validated_data["status"],
-            author = author,
-            assignee = validated_data["assignee"],
-            created_time = validated_data["created_time"],
-            issue_comment = validated_data["issue_comment"],
+        # assigne l'auteur du problème en assigné par defaut
+        assignee = self.context.get("request", None).user
+
+        # assignee = Contributor.objects.filter(user=author.pk)
+        projet = Project.objects.get(pk=self.context.get("view").kwargs["project_pk"])
+
+        issue = Issue.objects.create(
+            title=validated_data["title"],
+            desc=validated_data["desc"],
+            tag=validated_data["tag"],
+            priority=validated_data["priority"],
+            project=projet,
+            status=validated_data["status"],
+            author=author,
+            assignee=assignee
         )
-        project.save()
+        issue.save()
+        return issue
 
-        return project
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)

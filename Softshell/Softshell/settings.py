@@ -153,12 +153,11 @@ REST_FRAMEWORK = {
 # IsAdminUser
 # IsAuthenticatedOrReadOnly
 
-
 # Custom user model
 AUTH_USER_MODEL = 'User.User'
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=50),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
